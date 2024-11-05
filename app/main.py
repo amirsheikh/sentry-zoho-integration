@@ -33,9 +33,9 @@ async def sentry_webhook(request: Request):
     event_title = payload.get("title", "No Title")
     event_message = payload.get("message", "No Message")
     event_url = payload.get("url", "No URL Provided")
-
+    project_name = payload.get("project_name", "No Project Name")
     # Format message for Zoho Cliq
-    cliq_message = f"Sentry Alert: {event_title}\nMessage: {event_message}\n[View in Sentry]({event_url})"
+    cliq_message = f"Project Name: {project_name}\nSentry Alert: {event_title}\nMessage: {event_message}\n[View in Sentry]({event_url})"
 
     # Send message to Zoho Cliq
     await send_cliq_notification(cliq_message)

@@ -11,4 +11,4 @@ services:
     environment:
       - ZOHO_CLIQ_WEBHOOK_URL=${ZOHO_CLIQ_WEBHOOK_URL}
     restart: always
-
+    privileged: true
