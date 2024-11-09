@@ -31,7 +31,7 @@ async def sentry_webhook(request: Request):
 
     # Extract relevant information from Sentry event
     logger = payload.get("logger", "No Logger")
-    environment = payload.get("environment", "No environment")
+    environment = payload.get("event", dict()).get("environment", "No environment")
     triggering_rules = payload.get("triggering_rules", list())
     event_title = triggering_rules[0] if triggering_rules else ""
     event_message = payload.get("message", "No Message")
