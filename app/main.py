@@ -30,12 +30,15 @@ async def sentry_webhook(request: Request):
         raise HTTPException(status_code=400, detail="Invalid JSON payload") from e
 
     # Extract relevant information from Sentry event
-    event_title = payload.get("title", "No Title")
+    logger = payload.get("logger", "No Logger")
+    environment = payload.get("environment", "No environment")
+    triggering_rules = payload.get("triggering_rules", list())
+    event_title = triggering_rules[0] if triggering_rules else ""
     event_message = payload.get("message", "No Message")
     event_url = payload.get("url", "No URL Provided")
     project_name = payload.get("project_name", "No Project Name")
     # Format message for Zoho Cliq
-    cliq_message = f"Project Name: {project_name}\nSentry Alert: {event_title}\nMessage: {event_message}\n[View in Sentry]({event_url})"
+    cliq_message = f"Project Name: {project_name}\nEnvironment: {environment}\nLogger: {logger}\nSentry Alert: {event_title}\nMessage: {event_message}\n[View in Sentry]({event_url})"
 
     # Send message to Zoho Cliq
     await send_cliq_notification(cliq_message)
