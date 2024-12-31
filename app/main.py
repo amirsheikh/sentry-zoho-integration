@@ -39,7 +39,7 @@ async def send_cliq_notification(channel: str, message: str):
     }
     
     async with httpx.AsyncClient() as client:
-        response = await client.post(ZOHO_CLIQ_WEBHOOK_URL.replace(ZOHO_CLIQ_WEBHOOK_URL.replace(CHANNEL_PLACE_HOLDER, channel) , json=payload)
+        response = await client.post(ZOHO_CLIQ_WEBHOOK_URL.replace(CHANNEL_PLACE_HOLDER, channel) , json=payload)
         response.raise_for_status()
 
 # Endpoint to receive Sentry webhooks
