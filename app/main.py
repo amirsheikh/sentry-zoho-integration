@@ -7,11 +7,10 @@ import json
 ZOHO_CLIQ_WEBHOOK_URL = os.getenv("ZOHO_CLIQ_WEBHOOK_URL")
 CHANNEL_PLACE_HOLDER = "{channel}"
 
-ZOHO_CLIQ_DEFUALT_CHANNEL = os.getenv("ZOHO_CLIQ_DEFUALT_CHANNEL")
+ZOHO_CLIQ_DEFAULT_CHANNEL = os.getenv("ZOHO_CLIQ_DEFAULT_CHANNEL")
 
-if not ZOHO_CLIQ_DEFUALT_CHANNEL:
-    raise ValueError("ZOHO_CLIQ_DEFUALT_CHANNEL environment variable is not set.")
-
+if not ZOHO_CLIQ_DEFAULT_CHANNEL:
+    raise ValueError("ZOHO_CLIQ_DEFAULT_CHANNEL environment variable is not set.")
 
 
 if not ZOHO_CLIQ_WEBHOOK_URL:
@@ -66,7 +65,7 @@ async def sentry_webhook(request: Request):
     # Send message to Zoho Cliq
     channel = project_channels.get(project_name)
     if not channel:
-        channel = ZOHO_CLIQ_DEFUALT_CHANNEL
+        channel = ZOHO_CLIQ_DEFAULT_CHANNEL
         
     
     await send_cliq_notification(channel, cliq_message)
