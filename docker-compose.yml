@@ -10,5 +10,7 @@ services:
       - "${HOST_PORT}:80"
     environment:
       - ZOHO_CLIQ_WEBHOOK_URL=${ZOHO_CLIQ_WEBHOOK_URL}
+      - ZOHO_CLIQ_DEFAULT_CHANNEL=${ZOHO_CLIQ_DEFAULT_CHANNEL}
+      - ZOHO_CLIQ_CHANNELS=${ZOHO_CLIQ_CHANNELS}
     restart: always
     privileged: true
