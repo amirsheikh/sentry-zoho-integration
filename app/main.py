@@ -4,20 +4,42 @@ import os
 
 # Load the Zoho Cliq Webhook URL from environment variable
 ZOHO_CLIQ_WEBHOOK_URL = os.getenv("ZOHO_CLIQ_WEBHOOK_URL")
+CHANNEL_PLACE_HOLDER = "{channel}"
+
+DEFUALT_CHANNEL = os.getenv("ZOHO_CLIQ_DEFUALT_CHANNEL")
+
+if not DEFUALT_CHANNEL:
+    raise ValueError("ZOHO_CLIQ_DEFUALT_CHANNEL environment variable is not set.")
+
+
 
 if not ZOHO_CLIQ_WEBHOOK_URL:
     raise ValueError("ZOHO_CLIQ_WEBHOOK_URL environment variable is not set.")
 
+
+ZOHO_CLIQ_CHANNELS = os.getenv("ZOHO_CLIQ_CHANNELS")
+
+if not ZOHO_CLIQ_CHANNELS:
+    raise ValueError("ZOHO_CLIQ_CHANNELS environment variable is not set.")
+
+# Parse the JSON into a Python dictionary
+try:
+    project_channels = json.loads(ZOHO_CLIQ_CHANNELS)
+except json.JSONDecodeError:
+    raise ValueError("Failed to decode ZOHO_CLIQ_CHANNELS JSON.")
+
+
+
 app = FastAPI()
 
 # Helper function to send notifications to Zoho Cliq
-async def send_cliq_notification(message: str):
+async def send_cliq_notification(channel: str, message: str):
     payload = {
         "text": message
     }
     
     async with httpx.AsyncClient() as client:
-        response = await client.post(ZOHO_CLIQ_WEBHOOK_URL, json=payload)
+        response = await client.post(ZOHO_CLIQ_WEBHOOK_URL.replace(ZOHO_CLIQ_WEBHOOK_URL.replace(CHANNEL_PLACE_HOLDER, channel) , json=payload)
         response.raise_for_status()
 
 # Endpoint to receive Sentry webhooks
@@ -41,7 +63,12 @@ async def sentry_webhook(request: Request):
     cliq_message = f"Project Name: {project_name}\nEnvironment: {environment}\nLogger: {logger}\nSentry Alert: {event_title}\nMessage: {event_message}\n[View in Sentry]({event_url})"
 
     # Send message to Zoho Cliq
-    await send_cliq_notification(cliq_message)
+    channel = project_channels.get(project_name)
+    if not channel:
+        channel = DEFUALT_CHANNEL
+        
+    
+    await send_cliq_notification(channel, cliq_message)
 
     return {"status": "Notification sent to Zoho Cliq"}
 
