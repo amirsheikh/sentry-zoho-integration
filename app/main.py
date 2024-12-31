@@ -1,14 +1,15 @@
 from fastapi import FastAPI, Request, HTTPException
 import httpx
 import os
+import json
 
 # Load the Zoho Cliq Webhook URL from environment variable
 ZOHO_CLIQ_WEBHOOK_URL = os.getenv("ZOHO_CLIQ_WEBHOOK_URL")
 CHANNEL_PLACE_HOLDER = "{channel}"
 
-DEFUALT_CHANNEL = os.getenv("ZOHO_CLIQ_DEFUALT_CHANNEL")
+ZOHO_CLIQ_DEFUALT_CHANNEL = os.getenv("ZOHO_CLIQ_DEFUALT_CHANNEL")
 
-if not DEFUALT_CHANNEL:
+if not ZOHO_CLIQ_DEFUALT_CHANNEL:
     raise ValueError("ZOHO_CLIQ_DEFUALT_CHANNEL environment variable is not set.")
 
 
@@ -65,7 +66,7 @@ async def sentry_webhook(request: Request):
     # Send message to Zoho Cliq
     channel = project_channels.get(project_name)
     if not channel:
-        channel = DEFUALT_CHANNEL
+        channel = ZOHO_CLIQ_DEFUALT_CHANNEL
         
     
     await send_cliq_notification(channel, cliq_message)
